@@ -20,8 +20,10 @@ export default class logicaTimeline{
               return response.json()
             }
             return Promise.reject(response)
-          }).then(novoComentario => {
-             PubSub.publish('novos-comentarios',{fotoId:fotoId,novoComentario})
+          }).then(novoComentarios => {
+             const fotoAchada = this.fotos.find(foto => foto.id === fotoId)
+             const novosComentarios = fotoAchada.comentarios.push(novoComentarios);
+             PubSub.publish('timeline',this.fotos)
           }).catch(error => {
              console.log(error)
           })

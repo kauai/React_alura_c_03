@@ -29,15 +29,6 @@ export default class Timeline extends Component {
 
   //  PubSub.subscribe('atualiza-liker',(topico,infoLiker) => {})
 
-
-   PubSub.subscribe('novos-comentarios',(topico,newComents) => {
-        const fotoAchada = this.state.fotos.find(foto => foto.id === newComents.fotoId)
-        
-         console.log(newComents.novoComentario)
-         const novosComentarios = fotoAchada.comentarios.push(newComents.novoComentario);
-         this.setState({fotos:this.state.fotos});
-        
-   })
     
 }
 
