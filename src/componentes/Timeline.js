@@ -3,6 +3,7 @@ import { Redirect,Route } from 'react-router-dom';
 import FotoItem from './Foto';
 import PubSub from 'pubsub-js'
 import { CSSTransitionGroup } from 'react-transition-group'
+import logicaTimeline from '../logicas/logicaTimeline';
 
 export default class Timeline extends Component {
     
@@ -13,6 +14,7 @@ export default class Timeline extends Component {
            //token:null
        }
        this.login = this.props.login
+       this.logicaTimeline = new logicaTimeline([])
       
     }
 
@@ -20,23 +22,12 @@ export default class Timeline extends Component {
     //Pega os dados da pesquisa,no canal do pubSub!!!
     componentWillMount(){
        PubSub.subscribe('timeline',(topico,fotos) => {
+         console.log(fotos)
            this.setState({fotos})
        });
 
 
-       PubSub.subscribe('atualiza-liker',(topico,infoLiker) => {
-         const fotoAchada = this.state.fotos.find(foto => foto.id === infoLiker.fotoId)
-         fotoAchada.likeada = !fotoAchada.likeada
-         const possivelLiker = fotoAchada.likers.find(liker => liker.login === infoLiker.liker.login)
-         
-         if(possivelLiker === undefined){
-            fotoAchada.likers.push(infoLiker.liker)
-         }else{
-           const unLiker = fotoAchada.likers.filter(liker => liker.login != infoLiker.liker.login)
-           fotoAchada.likers  = unLiker
-         }
-         this.setState({fotos:this.state.fotos})
-   })
+  //  PubSub.subscribe('atualiza-liker',(topico,infoLiker) => {})
 
 
    PubSub.subscribe('novos-comentarios',(topico,newComents) => {
@@ -68,9 +59,10 @@ export default class Timeline extends Component {
        }).then(item => {
            this.setState({fotos:item})
            //this.setState({token:true})
+           this.logicaTimeline = new logicaTimeline(item)
        })
        .catch(error => {
-            console.log(error)
+            //console.log(error)
            // this.setState({token:false})
        })
        //.then(item => console.log(item))
@@ -93,16 +85,8 @@ export default class Timeline extends Component {
 
 
     like(fotoId){
-        fetch(`http://localhost:8080/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`,{method:'POST'})
-        .then(response => {
-          if(response.ok){
-            return response.json()
-          }else{
-            throw new Error('Não foi possivel curtir a foto')
-          }
-        }).then(liker => {
-          PubSub.publish('atualiza-liker',{fotoId:fotoId,liker})
-        })
+     // console.log(fotoId)
+      this.logicaTimeline.like(fotoId)
     }
 
 
@@ -119,18 +103,19 @@ export default class Timeline extends Component {
           .then(response => {
             if(response.ok){
               return response.json()
-            }else{
-              throw new Error("Nao Foi Possivel Comentar!!!")
             }
+            return Promise.reject(response)
           }).then(novoComentario => {
              PubSub.publish('novos-comentarios',{fotoId:fotoId,novoComentario})
+          }).catch(error => {
+             console.log(error)
           })
     }
 
 
 
     render(){
-        {console.log(this.state.fotos)}
+       // {console.log(this.state.fotos)}
     {/*console.log(Object.values(this.props.match.params)[0])*/}
         return (
         <div className="fotos container">
@@ -138,7 +123,7 @@ export default class Timeline extends Component {
         transitionName="example"
         transitionEnterTimeout={500}
         transitionLeaveTimeout={300}>
-        {this.state.fotos.map(item => <FotoItem comenta={this.comenta} key={item.id} foto={item} like={this.like}/> )}
+        {this.state.fotos.map(item => <FotoItem comenta={this.comenta} key={item.id} foto={item} like={this.like.bind(this)}/> )}
         </CSSTransitionGroup>
           {/*!this.state.token && <Redirect to='/'/>*/}
         </div>            
