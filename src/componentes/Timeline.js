@@ -89,29 +89,9 @@ export default class Timeline extends Component {
       this.logicaTimeline.like(fotoId)
     }
 
-
-
     comenta(fotoId,comentario){
-        const requestInfo = {
-            method:'POST',
-            body:JSON.stringify({texto:comentario}),
-            headers:new Headers({
-              'Content-type':'application/json'
-            })
-          }
-          fetch(`http://localhost:8080/api/fotos/${fotoId}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`,requestInfo)
-          .then(response => {
-            if(response.ok){
-              return response.json()
-            }
-            return Promise.reject(response)
-          }).then(novoComentario => {
-             PubSub.publish('novos-comentarios',{fotoId:fotoId,novoComentario})
-          }).catch(error => {
-             console.log(error)
-          })
+        this.logicaTimeline.comenta(fotoId,comentario)
     }
-
 
 
     render(){
@@ -123,7 +103,7 @@ export default class Timeline extends Component {
         transitionName="example"
         transitionEnterTimeout={500}
         transitionLeaveTimeout={300}>
-        {this.state.fotos.map(item => <FotoItem comenta={this.comenta} key={item.id} foto={item} like={this.like.bind(this)}/> )}
+        {this.state.fotos.map(item => <FotoItem comenta={this.comenta.bind(this)} key={item.id} foto={item} like={this.like.bind(this)}/> )}
         </CSSTransitionGroup>
           {/*!this.state.token && <Redirect to='/'/>*/}
         </div>            

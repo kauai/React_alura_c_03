@@ -6,6 +6,29 @@ export default class logicaTimeline{
         this.fotos = fotos
     }
 
+    comenta(fotoId,comentario){
+        const requestInfo = {
+            method:'POST',
+            body:JSON.stringify({texto:comentario}),
+            headers:new Headers({
+              'Content-type':'application/json'
+            })
+          }
+          fetch(`http://localhost:8080/api/fotos/${fotoId}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`,requestInfo)
+          .then(response => {
+            if(response.ok){
+              return response.json()
+            }
+            return Promise.reject(response)
+          }).then(novoComentario => {
+             PubSub.publish('novos-comentarios',{fotoId:fotoId,novoComentario})
+          }).catch(error => {
+             console.log(error)
+          })
+    }
+
+    
+
     like(fotoId){
         fetch(`http://localhost:8080/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`,{method:'POST'})
         .then(response => {
