@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Pubsub from 'pubsub-js'
 import Header from './Header';
 
 
 class FotoAtualizacoes extends Component {
-
-
   //essa funçao agora so chama a logica do like,passando o id!!!!
   like(e){
     e.preventDefault()
@@ -38,13 +36,6 @@ class FotoAtualizacoes extends Component {
 
 
 class FotoInfo extends Component {
-  // constructor(props){
-  //    super(props)
-  //   //  this.state = {
-  //   //      likers:this.props.fotos.likers,
-  //   //      comentarios:this.props.fotos.comentarios
-  //   //     }
-  // }
 
     render(){
        const {like,comentario,comentarios} = this.props.fotos
@@ -65,11 +56,14 @@ class FotoInfo extends Component {
 
               <ul className="foto-info-comentarios">
 
-               {this.props.fotos.comentarios.map(item =>  (
-                 <li key={item.id} className="comentario">
-                    <Link to={`/timeline/${item.login}`} className="foto-info-autor">{item.login}</Link>
+               {this.props.fotos.comentarios.length <= 4 ?
+                this.props.fotos.comentarios.map(item =>  (
+                    <li key={item.id} className="comentario">
+                    <Link to={`/timeline/${item.login}`} className="foto-info-autor">Comentarios: {item.login}</Link>
                     {item.texto}
-               </li>))}
+               </li>)) : 
+               <Link to={`/timeline/${this.props.fotos.login}`} className="foto-info-autor">Comentarios: {this.props.fotos.comentarios.length}</Link>
+              }
               </ul>
             </div>            
         );

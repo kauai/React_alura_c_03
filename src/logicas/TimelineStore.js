@@ -6,6 +6,23 @@ export default class logicaTimeline{
         this.fotos = fotos
     }
 
+
+    lista(urlPerfil){
+        fetch(urlPerfil)
+        .then(item => {
+            if(item.ok) return item.json()
+            return Promise.reject("Erro na requisiçao: erro => " + item.status);
+        }).then(item => {
+            this.fotos = item
+            PubSub.publish('timeline',this.fotos)
+        })
+        .catch(error => {
+             console.log(error)
+        })
+    }
+
+
+
     comenta(fotoId,comentario){
         const requestInfo = {
             method:'POST',
@@ -55,5 +72,13 @@ export default class logicaTimeline{
          }).catch(error => {
             console.log(error)
         })
+    }
+    
+
+
+    subscribe(calback){
+      PubSub.subscribe('timeline',(totpico,fotos) => {
+          calback(fotos)
+      })
     }
 }

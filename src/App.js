@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import Header from './componentes/Header';
 import Timeline from './componentes/Timeline';
+import TimelineStore from './logicas/TimelineStore'
+
+const LogicaTime = new TimelineStore()
 
 
 class App extends Component {
@@ -31,7 +34,7 @@ class App extends Component {
        {!this.verificaAutenticacao() && <Redirect exact to="/"/>}
       <div className="main">
          <Header/>
-         <Timeline login={this.props.match.params.login}/>
+         <Timeline login={this.props.match.params.login} store={LogicaTime}/>
       </div>
      </div>
     );

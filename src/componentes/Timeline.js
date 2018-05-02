@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
-import { Redirect,Route } from 'react-router-dom';
-import FotoItem from './Foto';
-import PubSub from 'pubsub-js'
+import React, { Component } from 'react'
+import { Redirect,Route } from 'react-router-dom'
+import FotoItem from './Foto'
 import { CSSTransitionGroup } from 'react-transition-group'
-import logicaTimeline from '../logicas/logicaTimeline';
+import logicaTimeline from '../logicas/TimelineStore'
 
 export default class Timeline extends Component {
     
@@ -14,23 +13,14 @@ export default class Timeline extends Component {
            //token:null
        }
        this.login = this.props.login
-       this.logicaTimeline = new logicaTimeline([])
       
     }
 
     
     //Pega os dados da pesquisa,no canal do pubSub!!!
     componentWillMount(){
-       PubSub.subscribe('timeline',(topico,fotos) => {
-         console.log(fotos)
-           this.setState({fotos})
-       });
-
-
-  //  PubSub.subscribe('atualiza-liker',(topico,infoLiker) => {})
-
-    
-}
+        this.props.store.subscribe(fotos => this.setState({fotos}))
+    }
 
     
 
@@ -42,21 +32,8 @@ export default class Timeline extends Component {
         }else{
            urlPerfil = `http://localhost:8080/api/public/fotos/${this.login}`
         }
-       
-        fetch(urlPerfil)
-       .then(item => {
-           if(item.ok) return item.json()
-           return Promise.reject("Erro na requisiçao: erro => " + item.status);
-       }).then(item => {
-           this.setState({fotos:item})
-           //this.setState({token:true})
-           this.logicaTimeline = new logicaTimeline(item)
-       })
-       .catch(error => {
-            //console.log(error)
-           // this.setState({token:false})
-       })
-       //.then(item => console.log(item))
+
+        this.props.store.lista(urlPerfil)
     }
   
 
@@ -77,11 +54,12 @@ export default class Timeline extends Component {
 
     like(fotoId){
      // console.log(fotoId)
-      this.logicaTimeline.like(fotoId)
+      this.props.store.like(fotoId)
     }
 
+
     comenta(fotoId,comentario){
-        this.logicaTimeline.comenta(fotoId,comentario)
+        this.props.store.comenta(fotoId,comentario)
     }
 
 
