@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Header from './componentes/Header';
 import Timeline from './componentes/Timeline';
-import { createStore } from 'redux';
-import { timeline } from './reducers/timeline'
+import { createStore,applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import { timeline } from './reducers/timeline';
 
-const store = createStore(timeline)
+const store = createStore(timeline,applyMiddleware(thunkMiddleware))
 
 
 class App extends Component {
@@ -33,10 +34,10 @@ class App extends Component {
       <div id="root">
        {/*console.log(this.props)*/}
        {!this.verificaAutenticacao() && <Redirect exact to="/"/>}
-      <div className="main">
-         <Header/>
-         <Timeline login={this.props.match.params.login} store={store}/>
-      </div>
+        <div className="main">
+          <Header/>
+          <Timeline login={this.props.match.params.login} store={store}/>
+        </div>
      </div>
     )
   }

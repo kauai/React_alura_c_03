@@ -7,17 +7,20 @@ export default class TimelineApi{
     }
 
 
-    static lista(urlPerfil,store){
-        fetch(urlPerfil)
-        .then(item => {
-            if(item.ok) return item.json()
-            return Promise.reject("Erro na requisiçao: erro => " + item.status);
-        }).then(fotos => {
-           store.dispatch({type:'LISTAGEM',fotos})
-        })
-        .catch(error => {
-             console.log(error)
-        })
+    static lista(urlPerfil){
+        return dispatch => {
+            fetch(urlPerfil)
+            .then(item => {
+                if(item.ok) return item.json()
+                return Promise.reject("Erro na requisiçao: erro => " + item.status);
+            }).then(fotos => {
+                dispatch({type:'LISTAGEM',fotos})
+                return fotos
+            })
+            .catch(error => {
+                console.log(error)
+            })
+       }
     }
 
 
