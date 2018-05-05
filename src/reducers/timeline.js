@@ -1,18 +1,28 @@
+import { List } from 'immutable'
+
+
 //REDUCER
-export function timeline(state = [],action){
+export function timeline(state = new List(),action){
 
     if(action.type == 'LISTAGEM'){
         console.log("Entrou na listagem!!!")
-        return action.fotos
+        return new List(action.fotos)
     }
     
 
     if(action.type === 'COMENTARIO'){
         const fotoId = action.fotoId
         const novoComentarios = action.novoComentario
-        const fotoAchada = state.find(foto => foto.id === fotoId)
-        fotoAchada.comentarios.push(novoComentarios)
-        return state
+
+        const fotoEstadoAntigo = state.find(foto => foto.id === fotoId)
+        const novosComentarios = fotoEstadoAntigo.comentarios.concat(novoComentarios)
+
+        const fotoEstadoNovo = Object.assign({},fotoEstadoAntigo,{comentarios:novosComentarios})
+
+        const indiceDaLista = state.findIndex(foto => foto.id === action.fotoId);
+        const novaLista = state.set(indiceDaLista,fotoEstadoNovo);
+    
+        return novaLista;
     }
  
     
