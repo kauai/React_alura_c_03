@@ -2,19 +2,8 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Header from './componentes/Header';
 import Timeline from './componentes/Timeline';
-import TimelineStore from './logicas/TimelineStore';
 import { createStore } from 'redux';
-
-const LogicaTime = new TimelineStore()
-
-//REDUCER
-function timeline(state = [],action){
-   if(action.type == 'LISTAGEM'){
-    console.log("Entrou na listagem!!!")
-    return action.fotos
-   }
-   return state
-}
+import { timeline } from './reducers/timeline'
 
 const store = createStore(timeline)
 
@@ -42,14 +31,14 @@ class App extends Component {
     
     return (
       <div id="root">
-      {/*console.log(this.props)*/}
+       {/*console.log(this.props)*/}
        {!this.verificaAutenticacao() && <Redirect exact to="/"/>}
       <div className="main">
          <Header/>
          <Timeline login={this.props.match.params.login} store={store}/>
       </div>
      </div>
-    );
+    )
   }
 }
 
