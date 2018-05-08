@@ -5,12 +5,14 @@ import { List } from 'immutable'
 export function timeline(state = new List(),action){
 
     if(action.type == 'LISTAGEM'){
+        console.log(state,action)
         console.log("Entrou na listagem!!!")
         return new List(action.fotos)
     }
     
 
     if(action.type === 'COMENTARIO'){
+        console.log(state,action.fotoId)
         const fotoId = action.fotoId
         const novoComentarios = action.novoComentario
 

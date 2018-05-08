@@ -64,15 +64,15 @@ export default class Timeline extends Component {
 
 
     render(){
-       // {console.log(this.state.fotos)}
+    {console.log(this.state.fotos)}
     {/*console.log(Object.values(this.props.match.params)[0])*/}
         return (
         <div className="fotos container">
         <CSSTransitionGroup
-        transitionName="example"
-        transitionEnterTimeout={500}
-        transitionLeaveTimeout={300}>
-        {this.state.fotos.map(item => <FotoItem comenta={this.comenta.bind(this)} key={item.id} foto={item} like={this.like.bind(this)}/> )}
+            transitionName="example"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={300}>
+            {this.state.fotos.map(item => <FotoItem comenta={this.comenta.bind(this)} key={item.id} foto={item} like={this.like.bind(this)}/> )}
         </CSSTransitionGroup>
           {/*!this.state.token && <Redirect to='/'/>*/}
         </div>            
